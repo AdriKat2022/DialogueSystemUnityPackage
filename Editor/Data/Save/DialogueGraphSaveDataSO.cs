@@ -6,6 +6,10 @@ namespace AdriKat.DialogueSystem.Data
 {
     public class DialogueGraphSaveDataSO : ScriptableObject
     {
+        [field: Header("WARNING: THIS IS NOT MEANT TO BE MODIFIED MANUALLY")]
+        [field: Header("ALTER AT YOUR OWN RISK")]
+
+        [field: Space(5)]
         [field: SerializeField] public string FileName { get; set; }
         [field: SerializeField] public List<DialogueGroupSaveData> Groups { get; set; }
         [field: SerializeField] public List<DialogueNodeSaveData> Nodes { get; set; }

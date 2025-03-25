@@ -38,9 +38,6 @@ namespace AdriKat.DialogueSystem.Elements
         {
             base.Draw();
 
-            // Display node values
-            Debug.Log($"Drawing Conditional Branch Node\nTrue: {NodeOnTrue}\nFalse: {NodeOnFalse}");
-
             // VariableNamesSO Selection Field
             ObjectField variableNamesField = new ObjectField("Variable Names SO")
             {

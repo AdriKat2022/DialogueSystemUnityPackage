@@ -71,7 +71,7 @@ namespace AdriKat.DialogueSystem.Utility
 
         private void Load()
         {
-            string path = EditorUtility.OpenFilePanel("Dialogue Graphs", "Assets/Editor/DialogueSystem/Graphs", "asset");
+            string path = EditorUtility.OpenFilePanel("Dialogue Graphs", DialogueIOUtility.GRAPHS_SAVE_PATH, "asset");
 
             if (string.IsNullOrEmpty(path))
             {
@@ -80,7 +80,6 @@ namespace AdriKat.DialogueSystem.Utility
             }
 
             Clear();
-            Debug.Log($"Initializing loading graph {path} ({Path.GetFileNameWithoutExtension(path)})");
             DialogueIOUtility.Initialize(graphView, Path.GetFileNameWithoutExtension(path));
             DialogueIOUtility.Load();
         }

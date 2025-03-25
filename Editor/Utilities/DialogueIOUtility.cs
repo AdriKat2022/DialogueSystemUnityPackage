@@ -13,31 +13,36 @@ namespace AdriKat.DialogueSystem.Utility
 {
     public static class DialogueIOUtility
     {
-        private static DialogueGraphView graphView;
-        private static string graphFileName;
-        private static string containerFolderPath;
+        public static readonly string GRAPHS_SAVE_PATH = "Assets/Resources/DialogueSystem/Editor/Graphs";
+        private static readonly string DIALOGUES_SAVE_PATH = "Assets/Resources/DialogueSystem";
+        private static readonly string DIALOGUES_GLOBALSPACE_FOLDER = "Global";
+        private static readonly string DIALOGUES_GROUPSPACE_FOLDER = "Groups";
 
-        private static List<DialogueGroup> groups;
-        private static List<DialogueNode> nodes;
+        private static DialogueGraphView _graphView;
+        private static string _graphFileName;
+        private static string _dialogueContainerFolderPath;
 
-        private static Dictionary<string, DialogueGroupSO> createdDialogueGroups;
-        private static Dictionary<string, DialogueSO> createdDialogues;
+        private static List<DialogueGroup> _groups;
+        private static List<DialogueNode> _nodes;
 
-        private static Dictionary<string, DialogueGroup> loadedGroups;
-        private static Dictionary<string, DialogueNode> loadedNodes;
+        private static Dictionary<string, DialogueGroupSO> _createdDialogueGroups;
+        private static Dictionary<string, DialogueSO> _createdDialogues;
 
-        public static void Initialize(DialogueGraphView graphView, string graphName)
+        private static Dictionary<string, DialogueGroup> _loadedGroups;
+        private static Dictionary<string, DialogueNode> _loadedNodes;
+
+        public static void Initialize(DialogueGraphView graphView, string graphFileName)
         {
-            DialogueIOUtility.graphView = graphView;
-            graphFileName = graphName;
-            containerFolderPath = $"Assets/DialogueSystem/Dialogues/{graphFileName}";
+            _graphView = graphView;
+            _graphFileName = graphFileName;
+            _dialogueContainerFolderPath = $"{DIALOGUES_SAVE_PATH}/{_graphFileName}";
 
-            groups = new List<DialogueGroup>();
-            nodes = new List<DialogueNode>();
-            createdDialogueGroups = new Dictionary<string, DialogueGroupSO>();
-            createdDialogues = new Dictionary<string, DialogueSO>();
-            loadedGroups = new Dictionary<string, DialogueGroup>();
-            loadedNodes = new Dictionary<string, DialogueNode>();
+            _groups = new List<DialogueGroup>();
+            _nodes = new List<DialogueNode>();
+            _createdDialogueGroups = new Dictionary<string, DialogueGroupSO>();
+            _createdDialogues = new Dictionary<string, DialogueSO>();
+            _loadedGroups = new Dictionary<string, DialogueGroup>();
+            _loadedNodes = new Dictionary<string, DialogueNode>();
         }
 
         #region Save Methods
@@ -46,11 +51,13 @@ namespace AdriKat.DialogueSystem.Utility
             CreateStaticFolders();
             GetElementsFromGraphView();
 
-            DialogueGraphSaveDataSO graphData = CreateAsset<DialogueGraphSaveDataSO>("Assets/Editor/DialogueSystem/Graphs", $"{graphFileName}Graph");
-            graphData.Initialize(graphFileName);
+            // Save the graph data (that will be loaded when the graph is opened again)
+            DialogueGraphSaveDataSO graphData = CreateAsset<DialogueGraphSaveDataSO>(GRAPHS_SAVE_PATH, $"{_graphFileName}Graph");
+            graphData.Initialize(_graphFileName);
 
-            DialogueContainerSO dialogueContainer = CreateAsset<DialogueContainerSO>(containerFolderPath, graphFileName);
-            dialogueContainer.Initialize(graphFileName);
+            // Save the dialogue container (for usable runtime data)
+            DialogueContainerSO dialogueContainer = CreateAsset<DialogueContainerSO>(_dialogueContainerFolderPath, _graphFileName);
+            dialogueContainer.Initialize(_graphFileName);
 
             SaveGroups(graphData, dialogueContainer);
 
@@ -64,7 +71,7 @@ namespace AdriKat.DialogueSystem.Utility
         private static void SaveGroups(DialogueGraphSaveDataSO graphData, DialogueContainerSO dialogueContainer)
         {
             List<string> groupNames = new();
-            foreach (DialogueGroup group in groups)
+            foreach (DialogueGroup group in _groups)
             {
                 SaveGroupToGraph(group, graphData);
                 SaveGroupToScriptableObject(group, dialogueContainer);
@@ -83,7 +90,7 @@ namespace AdriKat.DialogueSystem.Utility
 
                 foreach (string group in groupsToRemove)
                 {
-                    RemoveFolder($"{containerFolderPath}/Groups/{group}");
+                    RemoveFolder($"{_dialogueContainerFolderPath}/{DIALOGUES_GROUPSPACE_FOLDER}/{group}");
                 }
             }
 
@@ -93,12 +100,11 @@ namespace AdriKat.DialogueSystem.Utility
         private static void SaveGroupToScriptableObject(DialogueGroup group, DialogueContainerSO dialogueContainer)
         {
             string groupName = group.title;
-            CreateFolder($"{containerFolderPath}/Groups", groupName);
-            CreateFolder($"{containerFolderPath}/Groups/{groupName}", "Dialogues");
+            CreateFolderRecursive(_dialogueContainerFolderPath, $"{DIALOGUES_GROUPSPACE_FOLDER}/{groupName}/Dialogues");
 
-            DialogueGroupSO dialogueGroup = CreateAsset<DialogueGroupSO>($"{containerFolderPath}/Groups/{groupName}", groupName);
+            DialogueGroupSO dialogueGroup = CreateAsset<DialogueGroupSO>($"{_dialogueContainerFolderPath}/{DIALOGUES_GROUPSPACE_FOLDER}/{groupName}", groupName);
             dialogueGroup.Initialize(groupName);
-            createdDialogueGroups.Add(group.ID, dialogueGroup);
+            _createdDialogueGroups.Add(group.ID, dialogueGroup);
             dialogueContainer.DialogueGroups.Add(dialogueGroup, new List<DialogueSO>());
 
             SaveAsset(dialogueGroup);
@@ -123,7 +129,7 @@ namespace AdriKat.DialogueSystem.Utility
             SerializableDictionary<string, List<string>> groupedNodeNames = new();
             List<string> ungroupedNodeNames = new();
 
-            foreach (DialogueNode node in nodes)
+            foreach (DialogueNode node in _nodes)
             {
                 SaveNodeToGraph(node, graphData);
                 SaveNodeToScriptableObject(node, dialogueContainer);
@@ -158,7 +164,7 @@ namespace AdriKat.DialogueSystem.Utility
 
                     foreach (string node in nodesToRemove)
                     {
-                        RemoveAsset($"{containerFolderPath}/Groups/{oldGroupNode.Key}/Dialogues", node);
+                        RemoveAsset($"{_dialogueContainerFolderPath}/Groups/{oldGroupNode.Key}/Dialogues", node);
                     }
                 }
             }
@@ -173,7 +179,7 @@ namespace AdriKat.DialogueSystem.Utility
                 List<string> nodesToRemove = graphData.OldUngroupedNodeNames.Except(currentUngroupedNodeNames).ToList();
                 foreach (string node in nodesToRemove)
                 {
-                    RemoveAsset($"{containerFolderPath}/Global/Dialogues", node);
+                    RemoveAsset($"{_dialogueContainerFolderPath}/Global/Dialogues", node);
                 }
             }
 
@@ -231,7 +237,7 @@ namespace AdriKat.DialogueSystem.Utility
             );
 
             SaveAsset(dialogue);
-            createdDialogues.Add(node.ID, dialogue);
+            _createdDialogues.Add(node.ID, dialogue);
         }
 
         private static void SaveConditionalNodeToScriptableObject(DialogueNode node, DialogueContainerSO dialogueContainer)
@@ -252,7 +258,7 @@ namespace AdriKat.DialogueSystem.Utility
                 dialogue.DialogueVariableNames = conditionalBranchNode.DialogueVariableNames;
             }
 
-            createdDialogues.Add(node.ID, dialogue);
+            _createdDialogues.Add(node.ID, dialogue);
             SaveAsset(dialogue);
         }
 
@@ -273,9 +279,9 @@ namespace AdriKat.DialogueSystem.Utility
 
         private static void UpdateDialogueChoicesConnections()
         {
-            foreach (var node in nodes)
+            foreach (var node in _nodes)
             {
-                DialogueSO dialogue = createdDialogues[node.ID];
+                DialogueSO dialogue = _createdDialogues[node.ID];
 
                 Debug.Log(node.ID);
 
@@ -286,13 +292,13 @@ namespace AdriKat.DialogueSystem.Utility
                     Debug.Log($"Node on true: {conditionalBranchNode.NodeOnTrue}");
                     if (!string.IsNullOrEmpty(conditionalBranchNode.NodeOnTrue))
                     {
-                        conditionalBranchSO.DialogueOnTrue = createdDialogues[conditionalBranchNode.NodeOnTrue];
+                        conditionalBranchSO.DialogueOnTrue = _createdDialogues[conditionalBranchNode.NodeOnTrue];
                     }
 
                     Debug.Log($"Node on false: {conditionalBranchNode.NodeOnTrue}");
                     if (!string.IsNullOrEmpty(conditionalBranchNode.NodeOnFalse))
                     {
-                        conditionalBranchSO.DialogueOnFalse = createdDialogues[conditionalBranchNode.NodeOnFalse];
+                        conditionalBranchSO.DialogueOnFalse = _createdDialogues[conditionalBranchNode.NodeOnFalse];
                     }
 
                     conditionalBranchSO.DialogueVariableNames = conditionalBranchNode.DialogueVariableNames;
@@ -310,7 +316,7 @@ namespace AdriKat.DialogueSystem.Utility
                             continue;
                         }
 
-                        executableDialogueSO.Choices[choiceIndex].NextDialogue = createdDialogues[choice.NodeID];
+                        executableDialogueSO.Choices[choiceIndex].NextDialogue = _createdDialogues[choice.NodeID];
                         SaveAsset(dialogue);
                     }
                 }
@@ -325,28 +331,33 @@ namespace AdriKat.DialogueSystem.Utility
 
         public static void Load()
         {
-            DialogueGraphSaveDataSO graphData = LoadAsset<DialogueGraphSaveDataSO>("Assets/DialogueSystem/Editor/Graphs", graphFileName);
+            DialogueGraphSaveDataSO graphData = LoadAsset<DialogueGraphSaveDataSO>(GRAPHS_SAVE_PATH, _graphFileName);
 
             if (graphData == null)
             {
                 EditorUtility.DisplayDialog(
-                    "Error",
-                    "No graph data found!\n\n" +
-                    $"\"Assets/Editor/DialogueSystem/Graphs/{graphFileName}\"",
+                    "Graph Load Error",
+                    "No graph data found!\n" +
+                    $"\"{GRAPHS_SAVE_PATH}/{_graphFileName}\"\n\n" +
+                    "Make sure the graph data you are trying to load is placed in \"Assets/Resources/DialogueSystem/Editor/Graphs\".",
                     "Ok"
                 );
                 return;
             }
 
+            Debug.Log($"Loading graph {_graphFileName}...");
+
             DialogueEditorWindow.UpdateFileName(graphData.FileName);
             LoadGroups(graphData.Groups);
             LoadNodes(graphData.Nodes);
             LoadNodesConnections();
+
+            Debug.Log($"Graph {_graphFileName} loaded successfully.");
         }
 
         private static void LoadNodesConnections()
         {
-            foreach (KeyValuePair<string, DialogueNode> loadedNode in loadedNodes)
+            foreach (KeyValuePair<string, DialogueNode> loadedNode in _loadedNodes)
             {
                 foreach (Port port in loadedNode.Value.outputContainer.Children())
                 {
@@ -359,7 +370,7 @@ namespace AdriKat.DialogueSystem.Utility
                             continue;
                         }
 
-                        DialogueNode nextNode = loadedNodes[choiceData.NodeID];
+                        DialogueNode nextNode = _loadedNodes[choiceData.NodeID];
                         nexNodeInputPort = nextNode.inputContainer.Children().First() as Port;
                     }
                     else if (port.userData is string dialogueId)
@@ -370,7 +381,7 @@ namespace AdriKat.DialogueSystem.Utility
                         }
 
                         Debug.Log($"Linking conditional branch node ({dialogueId})");
-                        DialogueNode nextNode = loadedNodes[dialogueId];
+                        DialogueNode nextNode = _loadedNodes[dialogueId];
                         nexNodeInputPort = nextNode.inputContainer.Children().First() as Port;
                     }
                     else if (port.userData == null)
@@ -384,7 +395,7 @@ namespace AdriKat.DialogueSystem.Utility
                     }
 
                     Edge edge = port.ConnectTo(nexNodeInputPort);
-                    graphView.AddElement(edge);
+                    _graphView.AddElement(edge);
                     loadedNode.Value.RefreshPorts();
                 }
             }
@@ -400,7 +411,7 @@ namespace AdriKat.DialogueSystem.Utility
 
             foreach (DialogueNodeSaveData nodeData in nodes)
             {
-                DialogueNode node = graphView.CreateNode(nodeData.Name, nodeData.Type, nodeData.Position, false);
+                DialogueNode node = _graphView.CreateNode(nodeData.Name, nodeData.Type, nodeData.Position, false);
 
                 node.ID = nodeData.ID;
 
@@ -419,15 +430,15 @@ namespace AdriKat.DialogueSystem.Utility
                 }
 
                 node.Draw();
-                graphView.AddElement(node);
-                loadedNodes.Add(node.ID, node);
+                _graphView.AddElement(node);
+                _loadedNodes.Add(node.ID, node);
 
                 if (string.IsNullOrEmpty(nodeData.GroupID))
                 {
                     continue;
                 }
 
-                DialogueGroup group = loadedGroups[nodeData.GroupID];
+                DialogueGroup group = _loadedGroups[nodeData.GroupID];
                 node.Group = group;
                 group.AddElement(node);
             }
@@ -443,11 +454,11 @@ namespace AdriKat.DialogueSystem.Utility
 
             foreach (DialogueGroupSaveData groupData in groups)
             {
-                DialogueGroup group = graphView.CreateGroup(groupData.Name, groupData.Position);
+                DialogueGroup group = _graphView.CreateGroup(groupData.Name, groupData.Position);
 
                 group.ID = groupData.ID;
 
-                loadedGroups.Add(group.ID, group);
+                _loadedGroups.Add(group.ID, group);
             }
         }
 
@@ -457,18 +468,18 @@ namespace AdriKat.DialogueSystem.Utility
         private static void GetElementsFromGraphView()
         {
             Type groupType = typeof(DialogueGroup);
-            graphView.graphElements.ForEach(element =>
+            _graphView.graphElements.ForEach(element =>
             {
                 if (element is DialogueNode dialogueNode)
                 {
-                    nodes.Add(dialogueNode);
+                    _nodes.Add(dialogueNode);
                     return;
                 }
 
                 if (element.GetType() == groupType)
                 {
                     DialogueGroup group = (DialogueGroup)element;
-                    groups.Add(group);
+                    _groups.Add(group);
                     return;
                 }
 
@@ -480,13 +491,13 @@ namespace AdriKat.DialogueSystem.Utility
         #region Creation Methods
         private static void CreateStaticFolders()
         {
-            CreateFolder("Assets/Editor/DialogueSystem", "Graphs");
-            CreateFolder("Assets", "DialogueSystem");
-            CreateFolder("Assets/DialogueSystem", "Dialogues");
-            CreateFolder("Assets/DialogueSystem/Dialogues", graphFileName);
-            CreateFolder(containerFolderPath, "Global");
-            CreateFolder(containerFolderPath, "Groups");
-            CreateFolder($"{containerFolderPath}/Global", "Dialogues");
+            // Create the folders where the graph data will be saved
+            CreateFolderRecursive(GRAPHS_SAVE_PATH);
+
+            // Create the folders where the dialogues will be saved
+            CreateFolderRecursive(_dialogueContainerFolderPath);
+            CreateFolderRecursive(_dialogueContainerFolderPath, DIALOGUES_GROUPSPACE_FOLDER);
+            CreateFolderRecursive(_dialogueContainerFolderPath, DIALOGUES_GLOBALSPACE_FOLDER + "/Dialogues");
         }
         #endregion
 
@@ -497,12 +508,15 @@ namespace AdriKat.DialogueSystem.Utility
             T dialogue;
             if (node.Group != null)
             {
-                dialogue = CreateAsset<T>($"{containerFolderPath}/Groups/{node.Group.title}/Dialogues", node.DialogueName);
-                dialogueContainer.DialogueGroups.AddItem(createdDialogueGroups[node.Group.ID], dialogue);
+                dialogue = CreateAsset<T>(
+                    $"{_dialogueContainerFolderPath}/{DIALOGUES_GROUPSPACE_FOLDER}/{node.Group.title}/Dialogues", node.DialogueName
+                    );
+                dialogueContainer.DialogueGroups.AddItem(_createdDialogueGroups[node.Group.ID], dialogue);
             }
             else
             {
-                dialogue = CreateAsset<T>($"{containerFolderPath}/Global/Dialogues", node.DialogueName);
+                dialogue = CreateAsset<T>(
+                    $"{_dialogueContainerFolderPath}/{DIALOGUES_GLOBALSPACE_FOLDER}/Dialogues", node.DialogueName);
                 dialogueContainer.UngroupedDialogues.Add(dialogue);
             }
 
@@ -523,12 +537,67 @@ namespace AdriKat.DialogueSystem.Utility
 
         public static void CreateFolder(string path, string foldername)
         {
-            if (AssetDatabase.IsValidFolder($"{path}/{foldername}"))
+            if (foldername == "")
+            {
+                Debug.LogWarning("Error: Unable to create folder. Folder name is empty.");
+                return;
+            }
+
+            string basePathName = string.IsNullOrEmpty(path) ? "" : $"{path}/";
+
+            if (AssetDatabase.IsValidFolder($"{basePathName}{foldername}"))
             {
                 return;
             }
 
             AssetDatabase.CreateFolder(path, foldername);
+        }
+
+        public static void CreateFolderRecursive(string basePath, string foldername)
+        {
+            if (basePath != "" && !AssetDatabase.IsValidFolder(basePath))
+            {
+                Debug.LogWarning("Error: Unable to create folder while recursive creation. Base path does not exist.");
+                return;
+            }
+
+            string[] folders = foldername.Split('/');
+            string currentPath = basePath;
+            foreach (string folder in folders)
+            {
+                if (folder == "")
+                {
+                    Debug.LogWarning("Error: Unable to create folder while recursive creation. Folder name is empty.");
+                    return;
+                }
+                CreateFolder(currentPath, folder);
+                currentPath = $"{currentPath}/{folder}";
+            }
+        }
+
+        public static void CreateFolderRecursive(string foldername)
+        {
+            string[] folders = foldername.Split('/');
+            string currentPath = "";
+            foreach (string folder in folders)
+            {
+                if (folder == "")
+                {
+                    Debug.LogWarning("Error: Unable to create folder while recursive creation. Folder name is empty.");
+                    return;
+                }
+
+                CreateFolder(currentPath, folder);
+
+                if (currentPath == "")
+                {
+                    currentPath = folder;
+                }
+                else
+                {
+                    currentPath = $"{currentPath}/{folder}";
+                }
+            }
         }
 
         public static void RemoveFolder(string fullPath)
