@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c54bab28a1cbdf4bb919abb2366b71b, type: 3}
+  m_Name: AlreadyGotCoin2
+  m_EditorClassIdentifier: 
+  <DialogueName>k__BackingField: AlreadyGotCoin2
+  <IsStartingDialogue>k__BackingField: 0
+  <Text>k__BackingField: You just, can't see it. The developer did not draw it.
+  <Choices>k__BackingField:
+  - <Text>k__BackingField: Next Dialogue
+    <NextDialogue>k__BackingField: {fileID: 11400000, guid: 838312ac6f01e88488ab66092c152104, type: 2}
+  <Type>k__BackingField: 0

@@ -1,0 +1,14 @@
+{
+  "name": "com.adrikat.dialoguesystem",
+  "version": "0.0.0",
+  "displayName": "Dialogue Editor Tools",
+  "description": "A package that provides tools to create dialogues in Unity.",
+  "author": {
+    "name": "AdriKat",
+    "email": "adrien.schroedel@gmail.com",
+    "url": "https://adrikat2022.github.io/portfolio/"
+  },
+  "dependencies": {
+    "com.adrikat.toolkit": "1.4.1"
+  }
+}

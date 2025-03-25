@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58af0eb044f2d494d81b987631767529, type: 3}
+  m_Name: NewSwordInteraction
+  m_EditorClassIdentifier: 
+  <FileName>k__BackingField: NewSwordInteraction
+  <DialogueGroups>k__BackingField:
+    list:
+    - Key: {fileID: 11400000, guid: fce5a800d045b904a9c5d4c4d2ecd69d, type: 2}
+      Value:
+      - {fileID: 11400000, guid: 9bbfdde74080ce2498b33c0acded1d0d, type: 2}
+      - {fileID: 11400000, guid: 42e734da648bfb84ba9a87e943af5086, type: 2}
+      - {fileID: 11400000, guid: 629d9167437b2994ca7292caefe14713, type: 2}
+      - {fileID: 11400000, guid: 49f84c381739dc344bbcce37aa5ef8c2, type: 2}
+      - {fileID: 11400000, guid: 8192847a651f4fa409b348897c3f89ba, type: 2}
+      - {fileID: 11400000, guid: f4e6856f07656af46ae1b401161b4627, type: 2}
+      - {fileID: 11400000, guid: 6241c2fdaa57a4140a433b32f59331f2, type: 2}
+      - {fileID: 11400000, guid: 96b121582456d4f4c983063dae8bf0cd, type: 2}
+      - {fileID: 11400000, guid: 0c5895423ac5a6a4ea967317ebcf7712, type: 2}
+      - {fileID: 11400000, guid: 5205c2b4e301b4346ab696711e20cad9, type: 2}
+      - {fileID: 11400000, guid: c8f578353c81ebd4680f09f24ccae976, type: 2}
+      - {fileID: 11400000, guid: 0e66d3183753f194da01f0fbf54a7a8b, type: 2}
+      - {fileID: 11400000, guid: baa94e7ad409d9d4e8d7c349d613da11, type: 2}
+      - {fileID: 11400000, guid: dd123781873da014ebce596261b4e5e8, type: 2}
+      - {fileID: 11400000, guid: fa26e40d8e6b8884492c2112f6ded323, type: 2}
+      - {fileID: 11400000, guid: 8d66bf5584486084f9da04a8a3071e2c, type: 2}
+      - {fileID: 11400000, guid: ca2c004853bb3a34f8637ec1c37731d0, type: 2}
+      - {fileID: 11400000, guid: 21e007069bf908741bcf076b19a6871a, type: 2}
+      - {fileID: 11400000, guid: 91546236406939a4ab1a6636a1ed6e37, type: 2}
+    - Key: {fileID: 11400000, guid: 06eaaa83621d5cc4f91bd17bb1c57bda, type: 2}
+      Value:
+      - {fileID: 11400000, guid: eec8db60df0b66e4eb6801e1f2be8c2f, type: 2}
+      - {fileID: 11400000, guid: b73f353438779d14a8dc3d73b07e7842, type: 2}
+      - {fileID: 11400000, guid: 838312ac6f01e88488ab66092c152104, type: 2}
+      - {fileID: 11400000, guid: d6a8a4057b5b3e6468106d3f155cf47c, type: 2}
+      - {fileID: 11400000, guid: 99a9ebf9ee736e941a419447e0ea0289, type: 2}
+      - {fileID: 11400000, guid: 0b3a4229e11aa984e8c4f9fa6d428ee9, type: 2}
+      - {fileID: 11400000, guid: e9c02a96d3c477f4db91fefb0814dce9, type: 2}
+      - {fileID: 11400000, guid: 7ccea0f1cf229734ab5202b676ba7176, type: 2}
+      - {fileID: 11400000, guid: 5b3c040de875e3443a9deea0aa557390, type: 2}
+  <UngroupedDialogues>k__BackingField: []

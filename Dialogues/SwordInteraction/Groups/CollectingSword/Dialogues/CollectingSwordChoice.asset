@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 588f1ddba849ea94ab895833ea71023f, type: 3}
+  m_Name: CollectingSwordChoice
+  m_EditorClassIdentifier: 
+  <DialogueName>k__BackingField: CollectingSwordChoice
+  <Text>k__BackingField: 'Do you want to collect the sword?
+
+    Be careful, there
+    is no going back!'
+  <Choices>k__BackingField:
+  - <Text>k__BackingField: Take the sword
+    <NextDialogue>k__BackingField: {fileID: 11400000, guid: 889589b52ea7cf549a86622e5cf1d641, type: 2}
+  - <Text>k__BackingField: Refuse
+    <NextDialogue>k__BackingField: {fileID: 11400000, guid: 71e95c4f6cdf41a478f02e5b6317cdff, type: 2}
+  <Type>k__BackingField: 1
+  <IsStartingDialogue>k__BackingField: 0
