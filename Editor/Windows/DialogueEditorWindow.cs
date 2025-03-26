@@ -17,8 +17,7 @@ namespace AdriKat.DialogueSystem.Utility
         [MenuItem("Window/DialogueEditorWindow")]
         public static void ShowExample()
         {
-            DialogueEditorWindow wnd = GetWindow<DialogueEditorWindow>("DialogueEditorWindow");
-            //wnd.titleContent = new GUIContent();
+            GetWindow<DialogueEditorWindow>("Dialogue Editor Window");
         }
 
         private void OnEnable()

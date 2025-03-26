@@ -3,8 +3,7 @@ using UnityEngine;
 
 namespace AdriKat.DialogueSystem
 {
-
-    [CreateAssetMenu(fileName = "DialogueVariableNames", menuName = "Dialogue/Conditions Names", order = 1)]
+    [CreateAssetMenu(fileName = "DialogueVariableNames", menuName = "Dialogue System/Variable Names Condition Container", order = 1)]
     public class DialogueVariableNamesSO : ScriptableObject
     {
         [field: SerializeField] public string[] BoolVarNames { get; private set; }
