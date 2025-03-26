@@ -14,9 +14,9 @@ namespace AdriKat.DialogueSystem.Utility
     public static class DialogueIOUtility
     {
         public static readonly string GRAPHS_SAVE_PATH = "Assets/Resources/DialogueSystem/Editor/Graphs";
-        private static readonly string DIALOGUES_SAVE_PATH = "Assets/Resources/DialogueSystem";
-        private static readonly string DIALOGUES_GLOBALSPACE_FOLDER = "Global";
-        private static readonly string DIALOGUES_GROUPSPACE_FOLDER = "Groups";
+        public static readonly string DIALOGUES_SAVE_PATH = "Assets/Resources/DialogueSystem";
+        public static readonly string DIALOGUES_GLOBALSPACE_FOLDER = "Global";
+        public static readonly string DIALOGUES_GROUPSPACE_FOLDER = "Groups";
 
         private static DialogueGraphView _graphView;
         private static string _graphFileName;
@@ -48,6 +48,8 @@ namespace AdriKat.DialogueSystem.Utility
         #region Save Methods
         public static void Save()
         {
+            Debug.Log($"Saving graph {_graphFileName}...");
+
             CreateStaticFolders();
             GetElementsFromGraphView();
 
@@ -65,6 +67,8 @@ namespace AdriKat.DialogueSystem.Utility
 
             SaveAsset(graphData);
             SaveAsset(dialogueContainer);
+
+            Debug.Log($"Graph {_graphFileName} and its associated dialogues were saved successfully.");
         }
 
         #region Groups
@@ -206,7 +210,6 @@ namespace AdriKat.DialogueSystem.Utility
                 nodeSaveData.ConditionsToBeMet = conditionalBranchNode.ConditionToBeMet;
                 nodeSaveData.NodeIDOnTrue = conditionalBranchNode.NodeOnTrue;
                 nodeSaveData.NodeIDOnFalse = conditionalBranchNode.NodeOnFalse;
-                Debug.Log($"Saving to graph with: true: {nodeSaveData.NodeIDOnTrue}/false: {nodeSaveData.NodeIDOnFalse}");
             }
 
             graphData.Nodes.Add(nodeSaveData);
@@ -283,19 +286,15 @@ namespace AdriKat.DialogueSystem.Utility
             {
                 DialogueSO dialogue = _createdDialogues[node.ID];
 
-                Debug.Log(node.ID);
-
                 if (dialogue is DialogueConditionalBranchSO conditionalBranchSO)
                 {
                     DialogueConditionalBranchNode conditionalBranchNode = node as DialogueConditionalBranchNode;
 
-                    Debug.Log($"Node on true: {conditionalBranchNode.NodeOnTrue}");
                     if (!string.IsNullOrEmpty(conditionalBranchNode.NodeOnTrue))
                     {
                         conditionalBranchSO.DialogueOnTrue = _createdDialogues[conditionalBranchNode.NodeOnTrue];
                     }
 
-                    Debug.Log($"Node on false: {conditionalBranchNode.NodeOnTrue}");
                     if (!string.IsNullOrEmpty(conditionalBranchNode.NodeOnFalse))
                     {
                         conditionalBranchSO.DialogueOnFalse = _createdDialogues[conditionalBranchNode.NodeOnFalse];
@@ -380,7 +379,6 @@ namespace AdriKat.DialogueSystem.Utility
                             continue;
                         }
 
-                        Debug.Log($"Linking conditional branch node ({dialogueId})");
                         DialogueNode nextNode = _loadedNodes[dialogueId];
                         nexNodeInputPort = nextNode.inputContainer.Children().First() as Port;
                     }
@@ -678,6 +676,12 @@ namespace AdriKat.DialogueSystem.Utility
 
             return clonedElements;
         }
-        #endregion
+
+        public static bool GraphExists(string graphName)
+        {
+            string graphPath = $"{GRAPHS_SAVE_PATH}/{graphName}Graph.asset";
+            return AssetDatabase.LoadAssetAtPath<DialogueGraphSaveDataSO>(graphPath) != null;
+        }
     }
+    #endregion
 }

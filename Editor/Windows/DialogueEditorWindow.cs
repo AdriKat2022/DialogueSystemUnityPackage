@@ -14,7 +14,7 @@ namespace AdriKat.DialogueSystem.Utility
         private static TextField fileNameTextField;
         private Button saveButton;
 
-        [MenuItem("Window/DialogueEditorWindow")]
+        [MenuItem("Window/Dialogue Editor Window")]
         public static void ShowExample()
         {
             GetWindow<DialogueEditorWindow>("Dialogue Editor Window");
@@ -64,12 +64,39 @@ namespace AdriKat.DialogueSystem.Utility
                 return;
             }
 
+            // Check if the file name already exists
+            if (DialogueIOUtility.GraphExists(fileNameTextField.value))
+            {
+                bool overwrite = EditorUtility.DisplayDialog("Overwriting Graph", $"The graph {fileNameTextField.value} already exists.\n" +
+                    $"Do you want to overwrite it and update all its related dialogues?", "Overwrite", "Cancel");
+                if (!overwrite)
+                {
+                    return;
+                }
+            }
+
             DialogueIOUtility.Initialize(graphView, fileNameTextField.value);
             DialogueIOUtility.Save();
         }
 
         private void Load()
         {
+            // If the graphs save path does not exist or is empty warn the user that there are no graphs to load
+
+            if (!Directory.Exists(DialogueIOUtility.GRAPHS_SAVE_PATH))
+            {
+                EditorUtility.DisplayDialog("No Graphs Found", $"No graphs found to load. The folder {DialogueIOUtility.GRAPHS_SAVE_PATH} doesn't exist!\n" +
+                    "Start by creating some nodes and then saving the graph.", "Ok");
+                return;
+            }
+
+            if (Directory.GetFiles(DialogueIOUtility.GRAPHS_SAVE_PATH).Length == 0)
+            {
+                EditorUtility.DisplayDialog("No Graphs Found", $"No graphs found to load. The folder {DialogueIOUtility.GRAPHS_SAVE_PATH} is empty!\n" +
+                    "Start by creating some nodes and then saving the graph.", "Ok");
+                return;
+            }
+
             string path = EditorUtility.OpenFilePanel("Dialogue Graphs", DialogueIOUtility.GRAPHS_SAVE_PATH, "asset");
 
             if (string.IsNullOrEmpty(path))

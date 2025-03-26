@@ -50,15 +50,16 @@ namespace AdriKat.DialogueSystem.Inspector
             DrawFiltersArea();
             DialogueInspectorUtility.DrawSpace();
 
+            bool currentGroupedDialoguesFilter = groupedDialogueProperty.boolValue;
             bool currentStartingDialoguesOnlyFilter = startingDialogueOnlyProperty.boolValue;
 
             List<string> dialogueNames;
-            string dialogueFolderPath = $"Assets/DialogueSystem/Dialogues/{dialogueContainer.FileName}";
+            string dialogueFolderPath = $"{DialogueIOUtility.DIALOGUES_SAVE_PATH}/{dialogueContainer.FileName}";
             string dialogueInfoMessage;
 
-            if (groupedDialogueProperty.boolValue)
+            if (currentGroupedDialoguesFilter)
             {
-                List<string> dialogueGroupNames = dialogueContainer.GetdialogueGroupNames();
+                List<string> dialogueGroupNames = dialogueContainer.GetDialogueGroupNames();
 
                 if (dialogueGroupNames.Count == 0)
                 {
@@ -71,13 +72,13 @@ namespace AdriKat.DialogueSystem.Inspector
 
                 DialogueGroupSO dialogueGroup = (DialogueGroupSO)dialogueGroupProperty.objectReferenceValue;
                 dialogueNames = dialogueContainer.GetGroupedDialogueNames(dialogueGroup, currentStartingDialoguesOnlyFilter);
-                dialogueFolderPath += $"/Groups/{dialogueGroup.GroupName}/Dialogues";
+                dialogueFolderPath += $"/{DialogueIOUtility.DIALOGUES_GROUPSPACE_FOLDER}/{dialogueGroup.GroupName}/Dialogues";
                 dialogueInfoMessage = "There are no " + (currentStartingDialoguesOnlyFilter ? "starting" : "") + " dialogues in the selected group!";
             }
             else
             {
                 dialogueNames = dialogueContainer.GetUngroupedDialogueNames(currentStartingDialoguesOnlyFilter);
-                dialogueFolderPath += "/Global/Dialogues";
+                dialogueFolderPath += $"/{DialogueIOUtility.DIALOGUES_GLOBALSPACE_FOLDER}/Dialogues";
                 dialogueInfoMessage = "There are no " + (currentStartingDialoguesOnlyFilter ? "starting " : "") + "dialogues in the global space of this container!";
             }
 
@@ -116,6 +117,7 @@ namespace AdriKat.DialogueSystem.Inspector
             DialogueGroupSO oldDialogueGroup = dialogueGroupProperty.objectReferenceValue as DialogueGroupSO;
 
             string oldDialogueGroupName = oldDialogueGroup == null ? string.Empty : oldDialogueGroup.name;
+
             UpdateIndexOnDialogueGroupUpdate(
                 dialogueGroupNames,
                 selectedDialogueGroupIndexProperty,
@@ -125,7 +127,7 @@ namespace AdriKat.DialogueSystem.Inspector
 
             selectedDialogueGroupIndexProperty.DrawPopup("Dialogue Group", dialogueGroupNames.ToArray());
             string selectedDialogueGroupName = dialogueGroupNames[selectedDialogueGroupIndexProperty.intValue];
-            DialogueGroupSO selectedDialogueGroup = DialogueIOUtility.LoadAsset<DialogueGroupSO>($"Assets/DialogueSystem/Dialogues/{dialogueContainer.FileName}/Groups/{selectedDialogueGroupName}", selectedDialogueGroupName);
+            DialogueGroupSO selectedDialogueGroup = DialogueIOUtility.LoadAsset<DialogueGroupSO>($"{DialogueIOUtility.DIALOGUES_SAVE_PATH}/{dialogueContainer.FileName}/{DialogueIOUtility.DIALOGUES_GROUPSPACE_FOLDER}/{selectedDialogueGroupName}", selectedDialogueGroupName);
             dialogueGroupProperty.objectReferenceValue = selectedDialogueGroup;
 
             DialogueInspectorUtility.DrawDisabledFields(() => dialogueGroupProperty.DrawPropertyField());

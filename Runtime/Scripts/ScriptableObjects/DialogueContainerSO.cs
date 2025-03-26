@@ -18,7 +18,7 @@ namespace AdriKat.DialogueSystem.Data
             UngroupedDialogues = new List<DialogueSO>();
         }
 
-        public List<string> GetdialogueGroupNames()
+        public List<string> GetDialogueGroupNames()
         {
             List<string> groupNames = new();
             foreach (var dialogueGroup in DialogueGroups.Keys)
@@ -30,6 +30,12 @@ namespace AdriKat.DialogueSystem.Data
 
         public List<string> GetGroupedDialogueNames(DialogueGroupSO dialogueGroup, bool startingDialoguesOnly)
         {
+            if (dialogueGroup == null)
+            {
+                Debug.LogError("The dialogue group is null.");
+                return new List<string>();
+            }
+
             List<string> dialogueNames = new();
             foreach (var dialogue in DialogueGroups[dialogueGroup])
             {
